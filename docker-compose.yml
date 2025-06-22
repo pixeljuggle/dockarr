@@ -84,7 +84,7 @@ services:
       - PGID="${PGID}"
       - TZ="${TZ}"
     volumes:
-      - ${APPDATA_FOLDER}/radarr/config:/config
+      - ${APPDATA_FOLDER}/sonarr/config:/config
       - ${TV_FOLDER}:/tv
       - ${DOWNLOAD_FOLDER}:/downloads
     restart: unless-stopped
