@@ -113,6 +113,79 @@ This will start all the containers in detached mode.
 
 Replace `<your-ip>` with your server's IP address.
 
+---
+
+## Service Setup & Configuration
+
+After starting the containers, follow these steps to configure each service. All services can communicate using their container names as hostnames (e.g., `qbittorrent`, `jackett`).
+
+### qBittorrent ([Docs](https://docs.linuxserver.io/images/docker-qbittorrent/))
+
+1. Access the Web UI at `http://<your-ip>:8900`.
+2. A temporary password for the `admin` user will be printed to the container log on startup. You must then change username/password in the web UI (change immediately in Web UI → Settings → Web UI).
+3. If you do not change the password, it will reset to default on every container start.
+4. Download paths are pre-set to `/downloads/` and incomplete to `/downloads/incomplete/`.
+5. You can check logs for startup info: `docker logs qbittorrent`.
+
+### Jackett ([Docs](https://github.com/Jackett/Jackett#readme))
+
+1. Access at `http://<your-ip>:9117`.
+2. Click "Add Indexer" and select or search for your preferred trackers. Enter credentials if required.
+3. Copy the API Key from the Jackett dashboard (top right) for use in Sonarr/Radarr.
+4. For Sonarr/Radarr, use the Torznab feed URL: `http://jackett:9117/api/v2.0/indexers/<indexer>/results/torznab/`.
+
+### Radarr ([Docs](https://wiki.servarr.com/radarr))
+
+1. Access at `http://<your-ip>:7878`.
+2. Go to Settings → Download Clients → Add → qBittorrent.
+   - Host: `qbittorrent` (container name)
+   - Port: `8900`
+   - Username/Password: as set in qBittorrent
+   - Category: `movies` (create in qBittorrent if needed)
+3. Go to Settings → Indexers → Add → Torznab → Custom.
+   - URL: `http://jackett:9117/api/v2.0/indexers/<indexer>/results/torznab/`
+   - API Key: from Jackett
+4. Set Root Folder to `/movies`.
+
+### Sonarr ([Docs](https://wiki.servarr.com/sonarr))
+
+1. Access at `http://<your-ip>:8989`.
+2. Go to Settings → Download Clients → Add → qBittorrent.
+   - Host: `qbittorrent`
+   - Port: `8900`
+   - Username/Password: as set in qBittorrent
+   - Category: `tv` (create in qBittorrent if needed)
+3. Go to Settings → Indexers → Add → Torznab → Custom.
+   - URL: `http://jackett:9117/api/v2.0/indexers/<indexer>/results/torznab/`
+   - API Key: from Jackett
+4. Set Root Folder to `/tv`.
+
+### Jellyseerr ([Docs](https://github.com/Fallenbagel/jellyseerr#readme))
+
+1. Access at `http://<your-ip>:5056`.
+2. Complete the initial setup and create an admin account.
+3. Connect to Radarr and Sonarr:
+   - Radarr Host: `http://radarr:7878` (API Key from Radarr Settings → General)
+   - Sonarr Host: `http://sonarr:8989` (API Key from Sonarr Settings → General)
+4. Optionally, connect to Jellyfin (`http://jellyfin:8096`) or Plex.
+
+### Jellyfin ([Docs](https://jellyfin.org/docs/))
+
+1. Access at `http://<your-ip>:8096`.
+2. Complete the setup wizard and create an admin user.
+3. Add libraries:
+   - Movies: `/data/movies`
+   - TV Shows: `/data/tvshows`
+4. Configure users, metadata, and plugins as needed.
+
+---
+
+### Docker Networking Tips
+
+- Use container names as hostnames for service-to-service communication (e.g., `qbittorrent`, `jackett`, `radarr`, `sonarr`).
+- No need to use IP addresses within the Docker network.
+- If you change service names in `docker-compose.yml`, update references accordingly.
+
 ## Step 8: Stop the Services
 
 To stop all services, run:
