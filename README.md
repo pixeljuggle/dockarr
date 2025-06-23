@@ -192,6 +192,20 @@ Replace `<your-ip>` with your server's IP address.
 
 After starting the containers, follow these steps to configure each service. All services can communicate using their container names as hostnames (e.g., `qbittorrent`, `jackett`).
 
+### Arcane ([Docs](https://github.com/ofkm/arcane))
+
+**Initial Setup:**
+
+1. Access the Web UI at `http://<your-ip>:3030`.
+2. On first run, Arcane creates a default admin user if no users exist.
+
+   - Username: `arcane`
+   - Password: `arcane-admin`
+
+   You must change this password during onboarding.
+
+3. To add users: Go to Settings → User Management and click Create User. Fill in username, display name, email, and password.
+
 ### qBittorrent ([Docs](https://docs.linuxserver.io/images/docker-qbittorrent/))
 
 **Initial Setup:**
@@ -571,6 +585,12 @@ docker restart <container_name>
 
 ```bash
 docker compose down && docker compose up -d
+```
+
+or
+
+```bash
+docker compose up -d --force-recreate
 ```
 
 - Remove all containers and start fresh (keeps data):

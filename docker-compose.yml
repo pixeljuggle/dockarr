@@ -6,7 +6,7 @@ services:
       - '3030:3000'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${APPDATA_FOLDER}/arcane:/app/data
+      - ${APPDATA_FOLDER}/arcane/data:/app/data
     environment:
       - APP_ENV=production # Required
       - PUBLIC_SESSION_SECRET=${ARCANE_SESSION_SECRET}
@@ -37,6 +37,7 @@ services:
     restart: unless-stopped
   vpn:
     image: qmcgaw/gluetun
+    container_name: vpn
     cap_add:
       - NET_ADMIN
     devices:
