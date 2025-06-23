@@ -573,6 +573,12 @@ docker restart <container_name>
 docker compose down && docker compose up -d
 ```
 
+or
+
+```bash
+docker compose up -d --force-recreate
+```
+
 - Remove all containers and start fresh (keeps data):
 
 ```bash
