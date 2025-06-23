@@ -22,7 +22,7 @@ Before you can install Docker Engine, you need to uninstall any conflicting pack
 Your Linux distribution may provide unofficial Docker packages, which may conflict with the official packages provided by Docker. You must uninstall these packages before you install the official version of Docker Engine.
 
 ```bash
-for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+for pkg in docker.io docker-doc docker compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 ```
 
 #### Install using the convenience script
@@ -46,17 +46,42 @@ To install Docker Compose, follow the official Docker Compose installation guide
 
 - [Docker Compose Installation Documentation](https://docs.docker.com/compose/install/)
 
-For example, on Linux:
+For example, on Ubuntu:
 
 ```bash
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
+Add the `docker` group
+
+```bash
+sudo groupadd docker
+```
+
+Add your user to the `docker` group.
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+If you're running Linux in a virtual machine, it may be necessary to restart the virtual machine for changes to take effect.
+
 Verify the installation:
 
 ```bash
-docker-compose --version
+docker compose --version
+```
+
+```bash
+docker run hello-world
+```
+
+Configure Docker to start on boot with systemd
+
+```bash
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
 ```
 
 ## Step 3: Clone the Repository
@@ -87,7 +112,6 @@ DOWNLOAD_FOLDER="./downloads"
 MOVIE_FOLDER="./media/movies"
 TV_FOLDER="./media/tv"
 ```
-
 
 **Folder Structure Explanation:**
 
@@ -146,7 +170,7 @@ docker exec qbittorrent curl -s ifconfig.me
 Run the following command to start all services:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 This will start all the containers in detached mode.
@@ -427,7 +451,7 @@ After starting the containers, follow these steps to configure each service. All
 To stop all services, run:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## Troubleshooting
@@ -546,14 +570,14 @@ docker restart <container_name>
 - Rebuild and restart all services:
 
 ```bash
-docker-compose down && docker-compose up -d
+docker compose down && docker compose up -d
 ```
 
 - Remove all containers and start fresh (keeps data):
 
 ```bash
-docker-compose down
-docker-compose up -d
+docker compose down
+docker compose up -d
 ```
 
 - Check container resource usage:
@@ -664,7 +688,7 @@ ls -t backup_*.tar.gz | tail -n +8 | xargs rm -f
 1. **Change Default Credentials**: Always change default usernames and passwords
 2. **Use Strong Passwords**: Generate unique, complex passwords for each service
 3. **VPN Always On**: Never disable VPN for torrent traffic
-4. **Regular Updates**: Keep Docker images updated with `docker-compose pull`
+4. **Regular Updates**: Keep Docker images updated with `docker compose pull`
 5. **Firewall Configuration**: Only expose necessary ports to the internet
 
 ### Performance Optimization
@@ -725,7 +749,7 @@ A: Yes, but you'll need Docker Desktop. Some VPN configurations may require adju
 
 ### Q: How do I update the services?
 
-A: Run `docker-compose pull` to download updates, then `docker-compose up -d` to restart with new images.
+A: Run `docker compose pull` to download updates, then `docker compose up -d` to restart with new images.
 
 ### Q: What if a service won't start?
 
