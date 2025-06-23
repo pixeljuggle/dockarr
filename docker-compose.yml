@@ -17,6 +17,23 @@ services:
       # - DOCKER_GID=998
       # Optional: For local HTTP testing only
       # - PUBLIC_ALLOW_INSECURE_COOKIES=true
+    labels:
+      - flame.type=application
+      - flame.name=Arcane
+      - flame.url=${BASE_URL}:3030
+      - flame.icon=docker # optional, default is "docker"
+    restart: unless-stopped
+
+  flame:
+    image: pawelmalak/flame
+    container_name: flame
+    volumes:
+      - ${APPDATA_FOLDER}/flame/data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock # optional but required for Docker integration
+    ports:
+      - 5005:5005
+    environment:
+      - PASSWORD=${FLAME_PASSWORD}
     restart: unless-stopped
   vpn:
     image: qmcgaw/gluetun
@@ -59,6 +76,10 @@ services:
     volumes:
       - ${APPDATA_FOLDER}/qbittorrent/config:/config
       - ${DOWNLOAD_FOLDER}:/downloads
+    labels:
+      - flame.type=application
+      - flame.name=qBittorrent
+      - flame.url=${BASE_URL}:8900
     restart: unless-stopped
 
   jackett:
@@ -75,6 +96,10 @@ services:
       - ${APPDATA_FOLDER}/jackett/config:/config
       - ${APPDATA_FOLDER}/jackett/blackhole:/downloads
     restart: unless-stopped
+    labels:
+      - flame.type=application
+      - flame.name=Jackett
+      - flame.url=${BASE_URL}:9117
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -91,6 +116,10 @@ services:
       - ${MOVIE_FOLDER}:/movies
       - ${DOWNLOAD_FOLDER}:/downloads
     restart: unless-stopped
+    labels:
+      - flame.type=application
+      - flame.name=Radarr
+      - flame.url=${BASE_URL}:7878
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -107,6 +136,10 @@ services:
       - ${TV_FOLDER}:/tv
       - ${DOWNLOAD_FOLDER}:/downloads
     restart: unless-stopped
+    labels:
+      - flame.type=application
+      - flame.name=Sonarr
+      - flame.url=${BASE_URL}:8989
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
@@ -120,6 +153,10 @@ services:
     volumes:
       - ${APPDATA_FOLDER}/jellyseer/config:/app/config
     restart: unless-stopped
+    labels:
+      - flame.type=application
+      - flame.name=Jellyseer
+      - flame.url=${BASE_URL}:5056
 
   # plex:
   #   image: linuxserver/plex
@@ -154,3 +191,7 @@ services:
       - ${TV_FOLDER}:/data/tvshows
       - ${MOVIE_FOLDER}:/data/movies
     restart: unless-stopped
+    labels:
+      - flame.type=application
+      - flame.name=Jellyfin
+      - flame.url=${BASE_URL}:8096
