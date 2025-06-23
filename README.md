@@ -199,7 +199,7 @@ After starting the containers, follow these steps to configure each service. All
 1. Access the Web UI at `http://<your-ip>:8900`.
 2. Get the temporary password:
    ```bash
-   docker logs qbittorrent | grep "WebUI admin password"
+   docker logs qbittorrent | grep "WebUI"
    ```
    The password will be shown in the logs on first startup.
 3. Login with username `admin` and the temporary password.
@@ -252,7 +252,7 @@ After starting the containers, follow these steps to configure each service. All
 **Get Torznab URLs:**
 
 - After adding indexers, copy the Torznab feed URL for each
-- Format: `http://jackett:9117/api/v2.0/indexers/<indexer-id>/results/torznab/`
+- Format: `http://localhost:9117/api/v2.0/indexers/<indexer-id>/results/torznab/`
 
 ### Radarr ([Docs](https://wiki.servarr.com/en/radarr))
 
@@ -279,7 +279,7 @@ After starting the containers, follow these steps to configure each service. All
    - Name: (indexer name from Jackett)
    - Enable RSS Sync: ✓
    - Enable Interactive Search: ✓
-   - URL: `http://jackett:9117/api/v2.0/indexers/<indexer-id>/results/torznab/`
+   - URL: `http://localhost:9117/api/v2.0/indexers/<indexer-id>/results/torznab/`
    - API Key: (from Jackett)
    - Categories: 2000,2010,2020,2030,2040,2045,2050,2060 (movies)
    - Test and Save
@@ -324,7 +324,7 @@ After starting the containers, follow these steps to configure each service. All
    - Name: (indexer name from Jackett)
    - Enable RSS Sync: ✓
    - Enable Interactive Search: ✓
-   - URL: `http://jackett:9117/api/v2.0/indexers/<indexer-id>/results/torznab/`
+   - URL: `http://localhost:9117/api/v2.0/indexers/<indexer-id>/results/torznab/`
    - API Key: (from Jackett)
    - Categories: 5000,5010,5020,5030,5040,5045,5050 (TV)
    - Test and Save
