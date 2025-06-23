@@ -1,4 +1,17 @@
-appdata
+appdata/arcane
+appdata/gluetun
+appdata/jackett
+appdata/jellyfin
+appdata/jellyseer
+appdata/qbittorrent
+appdata/radarr
+appdata/sonarr
+appdata/tautulli
+
+downloads/**
+
+media/movies/**
+media/tv/**
 
 !.gitignore
 !**/.gitkeep
