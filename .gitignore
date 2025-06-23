@@ -1,9 +1,12 @@
 appdata
+
 !.gitignore
-!.gitkeep
+!**/.gitkeep
+
 !appdata/gluetun
 !appdata/gluetun/vpn
+
 !appdata/arcane/
 !appdata/arcane/templates/
 !appdata/arcane/templates/compose/
-!appdata/arcane/templates/compose/*
+!appdata/arcane/templates/compose/**
