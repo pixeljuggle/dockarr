@@ -1,0 +1,138 @@
+services:
+  vpn:
+    container_name: vpn
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+      - 9117:9117 # jackett
+      - 8900:8900 # qbittorrent
+      - 6881:6881 # qbittorrent
+      - 6881:6881/udp # qbittorrent
+      - 7878:7878 # radarr
+      - 8989:8989 # sonarr
+      - 5056:5055 # jellyseerr
+    volumes:
+      - ${APPDATA_FOLDER}/gluetun:/gluetun
+    environment:
+      - VPN_SERVICE_PROVIDER="${VPN_SERVICE_PROVIDER}"
+      - VPN_TYPE="${VPN_TYPE}"
+      - OPENVPN_CUSTOM_CONFIG="${OPENVPN_CUSTOM_CONFIG}"
+    networks:
+      - default
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    depends_on:
+      - vpn
+    network_mode: service:vpn # Comment this line if vpn is disabled
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=8900
+      - TORRENTING_PORT=6881
+    volumes:
+      - ${APPDATA_FOLDER}/qbittorrent/config:/config
+      - ${DOWNLOAD_FOLDER}:/downloads
+    restart: unless-stopped
+
+  jackett:
+    container_name: jackett
+    image: linuxserver/jackett:latest
+    depends_on:
+      - vpn
+    network_mode: service:vpn # Comment this line if vpn is disabled
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA_FOLDER}/jackett/config:/config
+      - ${APPDATA_FOLDER}/jackett/blackhole:/downloads
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    depends_on:
+      - vpn
+    network_mode: service:vpn # Comment this line if vpn is disabled
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA_FOLDER}/radarr/config:/config
+      - ${MOVIE_FOLDER}:/movies
+      - ${DOWNLOAD_FOLDER}:/downloads
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    depends_on:
+      - vpn
+    network_mode: service:vpn # Comment this line if vpn is disabled
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA_FOLDER}/sonarr/config:/config
+      - ${TV_FOLDER}:/tv
+      - ${DOWNLOAD_FOLDER}:/downloads
+    restart: unless-stopped
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=${TZ}
+    depends_on:
+      - vpn
+    network_mode: service:vpn # Comment this line if vpn is disabled
+    volumes:
+      - ${APPDATA_FOLDER}/jellyseer/config:/app/config
+    restart: unless-stopped
+
+  # plex:
+  #   image: linuxserver/plex
+  #   container_name: plex
+  #   network_mode: host
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - VERSION=docker
+  #   volumes:
+  #     - ${APPDATA_FOLDER}/plex/config:/config
+  #     - ${MOVIE_FOLDER}:/movies
+  #     - ${TV_FOLDER}:/tv
+  #   restart: unless-stopped
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - 8096:8096
+      - 8920:8920
+      - 7359:7359/udp
+      - 1900:1900/udp
+    volumes:
+      - ${APPDATA_FOLDER}/jellyfin/config:/config
+      - ${APPDATA_FOLDER}/jellyfin/cache:/cache
+      - ${TV_FOLDER}:/data/tvshows
+      - ${MOVIE_FOLDER}:/data/movies
+    restart: unless-stopped
